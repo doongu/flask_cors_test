@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <script type="text/javascript">
+        function isloan(libcode, ISBN) {
+            var req = new XMLHttpRequest();
+            req.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) { 
+                    var xmlDoc = req.responseXML;
+                    var hasBook = xmlDoc.getElementsByTagName("hasBook")[0].textContent;
+                    console.log(hasBook);
+                    if(hasBook == "N") {
+                        var result =[libcode,ISBN, NULL];
+                        return;
+                    }
+                    var loanAva = xmlDoc.getElementsByTagName("loanAvailable")[0].textContent;
+                    loanAva = (loanAva == "Y" ? true : false);
+                    console.log(loanAva);
+                    console.log(libcode,"에서", loanAva == true ? "대출가능":"대출불가능");
+                    var result = [libcode, ISBN, loanAva];
+                    return result;
+                }
+            };
+            //let link = "http://data4library.kr/api/bookExist?authKey=3fd583e1d01ecad03bcfd4a9476a5a7e08b19ed817ef17dbab371f3ad097c73e&libCode=126157&isbn13=9788996094074"
+            req.open("GET", "http://data4library.kr/api/bookExist?authKey=3fd583e1d01ecad03bcfd4a9476a5a7e08b19ed817ef17dbab371f3ad097c73e&libCode="
+            +libcode+"&isbn13="+ISBN, true);
+            req.send();
+            console.log(req);
+        }
+
+        //loadDoc('libcode','ISBN');
+    </script>
+    <title>AJAX Sample</title>
+</head>
+
+<body onload="isloan('126157','9788996094074');">
+    <h1>isloan</h1>
+    <div id="output"></div>
+</body>
+
+</html>
